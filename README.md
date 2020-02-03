@@ -7,16 +7,13 @@ The draft app-note for Digital RF
 This application note details the open source package Digital RF. This software product contains tools to use the formats Digital RF and Digital Metadata which can be used store RF voltage data and its associated metadata. First showing 
 
 ## Format
+A diagram of the file format is shown in the figure below. Each data set starts with a top level directory. The sub directories are labeled as ``channels'' which have folders labeled as metadata, an h5 file named drf\_properties.h5 folders with the data and time that the data was taken. In order to clarify for the rest of the document we will refer to this structure as a Digital RF Channel. 
 
-Block-oriented format and namespace
-Time → Channel → Subchannel → Samples
-Indexed by number of samples from Unix epoch (Jan. 1, 1970)
-Data saved within HDF5 files for long-term portability
-File structure is optimized for quick API retrieval of specific RF samples
-Metadata is saved along with RF
-Digital metadata is saved synchronously with each RF voltage file
-HDF5 format ensures long term portability and metadata retrieval
-Tree structure of time-indexed data objects 
+Within each Digital RF Channel directory the drf\_properites.h5 a metadata directory and a set of directories with time tags for names. The drf\_properties.h5 file holds information on the RF data such as sampling rate, and numerical type. The metadata directory is similar to the channel directory: a properties file, dmd\_properties.h5, which holds basic information on the metadata e.g. sampling rate; and a series of time tagged folders holding the h5 files containing the metadata. Each time tagged directory is a series of h5 files titled using a posix time stamp that hold the RF data. The h5 files hold the rf data in arrays of size M samples by N Digital RF Sub-channels. The concept of a Digital RF Sub-channel is similar to the Digital RF Channel but can simplify data reading so that data streams that will be processed together, and have the same sampling rate, can easily be pulled into memory together. The Digital RF Sub-channels are labelled, by default, numerically like a Python list. The user can save with in the Digital Metadata identifying information for the Digital RF Sub-channels.
+
+![DRF File Diagram](images/drfdiagram.png)
+
+The format has some distinctive aspects. The labeling convention for samples uses the unix epoch but instead of number of seconds, it uses number of samples, i.e. sample rate multiplied the time stamp in seconds. This allows for all samples to be labelled with an integer number. The sampling rate is also stored as a ratio of two integers, thus avoiding any round off issues. 
 
 
 ## Install Instructions
@@ -104,6 +101,8 @@ The MATLAB toolbox is not created by default. If you have MATLAB R2016a or highe
 The toolbox package will then be found at "build/matlab/digital_rf.mltbx".
 
 ## Example Usage
+
+The Digital RF and Digital Metadata formats have a Python API that can be used to access the data. The software creates a reader object for the entire data sets. The user then specifies a Digital RF Channel and number of samples they desire which are then output in an area. When the user reads a piece of data they will get an array where the first dimension is the number of samples while the second dimension is the number of Digital RF Sub-channels, unless they specify the Sub-channel number in the read call.
 
 Python and C examples can be found in the examples directory in the source tree. The C examples can be compiled from the build directory by running::
 
