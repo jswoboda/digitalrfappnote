@@ -4,27 +4,30 @@ The draft app-note for Digital RF
 
 ## Abstract
 
-This application note details the open source package Digital RF. This software product contains tools to use the formats Digital RF and Digital Metadata which can be used store RF voltage data and its associated metadata. First showing 
+This application note details the open source package Digital RF. This software product contains tools to use the formats Digital RF and Digital Metadata which can be used store RF voltage data and its associated metadata. First showing
 
 ## Format
-A diagram of the file format is shown in the figure below. Each data set starts with a top level directory. The sub directories are labeled as ``channels'' which have folders labeled as metadata, an h5 file named drf\_properties.h5 folders with the data and time that the data was taken. In order to clarify for the rest of the document we will refer to this structure as a Digital RF Channel. 
+A diagram of the file format is shown in the figure below. Each data set starts with a top level directory. The sub directories are labeled as ``channels'' which have folders labeled as metadata, an h5 file named drf\_properties.h5 folders with the data and time that the data was taken. In order to clarify for the rest of the document we will refer to this structure as a Digital RF Channel.
 
 Within each Digital RF Channel directory the drf\_properites.h5 a metadata directory and a set of directories with time tags for names. The drf\_properties.h5 file holds information on the RF data such as sampling rate, and numerical type. The metadata directory is similar to the channel directory: a properties file, dmd\_properties.h5, which holds basic information on the metadata e.g. sampling rate; and a series of time tagged folders holding the h5 files containing the metadata. Each time tagged directory is a series of h5 files titled using a posix time stamp that hold the RF data. The h5 files hold the rf data in arrays of size M samples by N Digital RF Sub-channels. The concept of a Digital RF Sub-channel is similar to the Digital RF Channel but can simplify data reading so that data streams that will be processed together, and have the same sampling rate, can easily be pulled into memory together. The Digital RF Sub-channels are labelled, by default, numerically like a Python list. The user can save with in the Digital Metadata identifying information for the Digital RF Sub-channels.
 
 ![DRF File Diagram](images/drfdiagram.png)
 
-The format has some distinctive aspects. The labeling convention for samples uses the unix epoch but instead of number of seconds, it uses number of samples, i.e. sample rate multiplied the time stamp in seconds. This allows for all samples to be labelled with an integer number. The sampling rate is also stored as a ratio of two integers, thus avoiding any round off issues. 
+The format has some distinctive aspects. The labeling convention for samples uses the unix epoch but instead of number of seconds, it uses number of samples, i.e. sample rate multiplied the time stamp in seconds. This allows for all samples to be labelled with an integer number. The sampling rate is also stored as a ratio of two integers, thus avoiding any round off issues.
 
 
 ## Install Instructions
 
-Digital RF can be installed through a number of different package managers. For a full list and instructions see the README on the [Digital RF GitHub page](https://github.com/MITHaystack/digital_rf). 
+Digital RF can be installed through a number of different package managers. For a full list and instructions see the README on the [Digital RF GitHub page](https://github.com/MITHaystack/digital_rf).
 
 In this note we will focus on installing Digital RF from source on Ubuntu 18.04. We first install UHD and GNU Radio as shown in this [application note](https://kb.ettus.com/Building_and_Installing_the_USRP_Open-Source_Toolchain_(UHD_and_GNU_Radio)_on_Linux). After the UHD and GNU Radio installs a few more applications need to be installed. These can be installed through apt-get on the Ubuntu system:
-
-	sudo apt-get install ibhdf5-dev python-pkgconfig python-setuptools python-h5py \
-	python-dateutil python-tz python-six python-pandas python-pytest python-scipy python-watchdog 
-
+~~~bash
+	sudo apt install python3-pip
+	pip3 install sounddevice
+	sudo apt install libhdf5-dev python3-pkgconfig python3-setuptools python3-h5py \
+	python3-packaging python3-dateutil python3-tz python3-uhd python3-matplotlib \
+	python3-pandas python3-pandas python3-watchdog
+~~~
 To start the install clone the repository, enter the source directory and create a build directory to keep the source tree clean:
 
     git clone https://github.com/MITHaystack/digital_rf.git
